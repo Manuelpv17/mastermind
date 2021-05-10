@@ -1,8 +1,12 @@
+/* 
+Mastermind Game JS
+*/
+
 let difficulty = 8;
 let try_position = 0;
 let row_position = 0;
 let lock_difficulty = false;
-let win = false;
+let end = false;
 let max = 6;
 let patron = [
   Math.floor(Math.random() * max) + 1,
@@ -23,7 +27,10 @@ let current_try = [-1, -1, -1, -1];
 console.log("patron: ", patron);
 render();
 
+/* KEY BOARD */
+
 document.addEventListener("keydown", function (event) {
+  /* p -> Raise the difficulty */
   if (event.key === "p" && lock_difficulty === false) {
     clean();
     if (difficulty < 8) {
@@ -31,6 +38,7 @@ document.addEventListener("keydown", function (event) {
     }
     render();
   }
+  /* o -> Reduce the difficulty */
   if (event.key === "o" && lock_difficulty === false) {
     clean();
     if (difficulty > 2) {
@@ -38,7 +46,8 @@ document.addEventListener("keydown", function (event) {
     }
     render();
   }
-  if (event.key === "ArrowUp" && !win) {
+  /* Up Arrow -> Move up */
+  if (event.key === "ArrowUp" && !end) {
     if (row_position > 0) {
       document
         .querySelectorAll(".tries > li")
@@ -53,7 +62,8 @@ document.addEventListener("keydown", function (event) {
       ].style.backgroundColor = "lightgrey";
     }
   }
-  if (event.key === "ArrowDown" && !win) {
+  /* Up Down-> Move down */
+  if (event.key === "ArrowDown" && !end) {
     if (row_position < 3) {
       document
         .querySelectorAll(".tries > li")
@@ -68,8 +78,12 @@ document.addEventListener("keydown", function (event) {
       ].style.backgroundColor = "lightgrey";
     }
   }
+  /* Enter -> Submit Try */
   if (event.key === "Enter" && !current_try.includes(-1)) {
     lock_difficulty = true;
+
+    console.log("patron", patron);
+    console.log("try", current_try);
 
     document.querySelectorAll(".tries ul")[try_position].style.backgroundColor =
       "transparent";
@@ -83,58 +97,30 @@ document.addEventListener("keydown", function (event) {
       document.querySelector("h1").textContent = "You Win :)";
     }
 
+    /* check if win */
     for (let i = 0; i < 4; i++) {
-      if (current_try[i] == patron[i]) win = true;
+      if (current_try[i] == patron[i]) end = true;
       else {
-        win = false;
+        end = false;
         break;
       }
     }
 
-    let row_feedback = 0;
-    let patron_copy = [...patron];
-    for (let i = 0; i < 4; i++) {
-      if (current_try[i] === patron_copy[i]) {
-        document
-          .querySelectorAll(".tries-feedback > li")
-          [try_position].querySelectorAll("li")[
-          row_feedback
-        ].style.backgroundColor = "red";
-        row_feedback++;
-        current_try[i] = 0;
-        patron_copy[i] = -1;
-      }
-    }
+    /* Feedback */
+    feedback_func();
 
-    for (let i = 0; i < 4; i++) {
-      for (let j = 0; j < 4; j++) {
-        if (patron_copy[i] === current_try[j]) {
-          document
-            .querySelectorAll(".tries-feedback > li")
-            [try_position].querySelectorAll("li")[
-            row_feedback
-          ].style.backgroundColor = "white";
-          row_feedback++;
-          current_try[j] = 0;
-          patron_copy[i] = -1;
-        }
-      }
-    }
-
-    if (win) {
+    if (end) {
       reveal();
       document.querySelector("h1").textContent = "You Win :)";
+    } else if (try_position < difficulty) {
+      try_position++;
+    } else {
+      reveal();
+      document.querySelector("h1").textContent = "You lost :/";
+      end = true;
     }
 
     current_try = [-1, -1, -1, -1];
-
-    if (try_position < difficulty) try_position++;
-    else {
-      reveal();
-      document.querySelector("h1").textContent = "You lost :/";
-      win = true;
-    }
-
     row_position = 0;
 
     document.querySelectorAll(".tries ul")[try_position].style.backgroundColor =
@@ -145,6 +131,7 @@ document.addEventListener("keydown", function (event) {
       row_position
     ].style.backgroundColor = "lightgrey";
   }
+  /* Escape -> Restart game */
   if (event.key === "Escape") {
     patron = [
       Math.floor(Math.random() * 6),
@@ -158,7 +145,7 @@ document.addEventListener("keydown", function (event) {
     try_position = 0;
     row_position = 0;
     lock_difficulty = false;
-    win = false;
+    end = false;
     render();
 
     document.querySelectorAll(".tries ul")[try_position].style.backgroundColor =
@@ -169,6 +156,7 @@ document.addEventListener("keydown", function (event) {
       row_position
     ].style.backgroundColor = "lightgrey";
   }
+  /* 1 - 6 -> Color selection */
   if (["1", "2", "3", "4", "5", "6"].includes(event.key)) {
     document
       .querySelectorAll(".tries > li")
@@ -179,6 +167,7 @@ document.addEventListener("keydown", function (event) {
   }
 });
 
+/* Clear DOM, Restart CSS properties */
 function clean() {
   let feedback = document.querySelector(".tries-feedback");
   let tries = document.querySelector(".tries");
@@ -204,6 +193,7 @@ function clean() {
   }
 }
 
+/* Render DOM */
 function render() {
   let feedback = document.querySelector(".tries-feedback");
   let feedback_li = document.querySelector(".tries-feedback > li");
@@ -223,9 +213,43 @@ function render() {
   ].style.backgroundColor = "lightgrey";
 }
 
+/* Show right answer */
 function reveal() {
   patron_li = document.querySelectorAll(".board__patron li");
   for (let i = 0; i < 4; i++) {
     patron_li[i].style.backgroundColor = colors[patron[i]];
+  }
+}
+
+/* Show feedback */
+function feedback_func() {
+  let row_feedback = 0;
+  let patron_copy = [...patron];
+  for (let i = 0; i < 4; i++) {
+    if (current_try[i] === patron_copy[i]) {
+      document
+        .querySelectorAll(".tries-feedback > li")
+        [try_position].querySelectorAll("li")[
+        row_feedback
+      ].style.backgroundColor = "red";
+      row_feedback++;
+      current_try[i] = 0;
+      patron_copy[i] = -1;
+    }
+  }
+
+  for (let i = 0; i < 4; i++) {
+    for (let j = 0; j < 4; j++) {
+      if (patron_copy[i] === current_try[j]) {
+        document
+          .querySelectorAll(".tries-feedback > li")
+          [try_position].querySelectorAll("li")[
+          row_feedback
+        ].style.backgroundColor = "white";
+        row_feedback++;
+        current_try[j] = 0;
+        patron_copy[i] = -1;
+      }
+    }
   }
 }
