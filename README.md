@@ -28,7 +28,7 @@ Keyboard options:
 
 ### Example
 
-  <img src="https://ibb.co/27br5cL" width="500" />
+<a href="https://ibb.co/27br5cL"><img src="https://i.ibb.co/yn3CVgM/Screenshot-from-2021-05-10-14-11-53.png" alt="example" border="0" width="500"></a>
 
 ## Authors
 
