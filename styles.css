@@ -180,3 +180,37 @@ body {
   width: 50%;
   border: 1px solid white;
 }
+
+/* Help */
+
+.help {
+  font-size: 2.3vh;
+  position: fixed;
+  width: 35%;
+  height: 25%;
+  top: 2vh;
+  right: 2vh;
+  border-radius: 10vh;
+  background: #24c6dc; /* fallback for old browsers */
+  background: -webkit-linear-gradient(
+    to right,
+    #514a9d,
+    #24c6dc
+  ); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(
+    to right,
+    #514a9d,
+    #24c6dc
+  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  color: #fff;
+  box-shadow: 2px 2px 3px #999;
+}
+
+.help h4 {
+  margin: 2%;
+  text-align: center;
+}
+
+.help li {
+  margin-left: 6%;
+}
